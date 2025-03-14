@@ -1,7 +1,7 @@
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers, Sequential
-from tensorflow.keras.layers import Conv2D, LeakyReLU, Flatten, Dropout, Dense
+import keras.api as keras
+from keras.api import layers
+from keras.api.layers import Conv2D, LeakyReLU, Flatten, Dropout, Dense
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -22,7 +22,7 @@ def normalize(image):
 
 # Carregando dataset
 dataset_path = "data/train"
-train_ds = tf.keras.preprocessing.image_dataset_from_directory(
+train_ds = keras.preprocessing.image_dataset_from_directory(
     dataset_path,
     label_mode=None,
     color_mode='grayscale',
@@ -42,30 +42,33 @@ plot_a_few_images(train_ds)
 
 # Criando o gerador
 def constroi_gerador():
-    modelo = keras.Sequential()
-    modelo.add(layers.Dense(4*4*256, use_bias=False, input_shape=(100,)))
-    modelo.add(layers.LeakyReLU())
-    modelo.add(layers.Reshape((4, 4, 256)))
-    
-    
-    modelo.add(layers.Conv2DTranspose(256, (5, 5), strides=(2, 2), padding='same', use_bias=False))
-    modelo.add(layers.BatchNormalization())
-    modelo.add(layers.LeakyReLU())
+    input = layers.Input((100,))
+    x = layers.Dense(4*4*256, use_bias=False)(input)
+    x = layers.LeakyReLU()(x)
+    x = layers.Reshape((4, 4, 256))(x)
+
+    x= layers.Conv2DTranspose(256, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
+    x= layers.BatchNormalization()(x)
+    x= layers.LeakyReLU()(x)
     
 
-    modelo.add(layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False))
-    modelo.add(layers.BatchNormalization())
-    modelo.add(layers.LeakyReLU())
+    x= layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
+    x= layers.BatchNormalization()(x)
+    x= layers.LeakyReLU()(x)
     
-    modelo.add(layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False))
-    modelo.add(layers.LeakyReLU())
+    x= layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
+    x= layers.LeakyReLU()(x)
 
-    modelo.add(layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False))
-    modelo.add(layers.LeakyReLU())
+    x= layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
+    x= layers.LeakyReLU()(x)
     
-    modelo.add(layers.Conv2DTranspose(1, (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh'))
+    output = layers.Conv2DTranspose(1, (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh')(x)
+
+    model = keras.Model(input,output)
     
-    return modelo
+    return model
+
+
 
 # Criando o discriminador
 def constroi_discriminador():
