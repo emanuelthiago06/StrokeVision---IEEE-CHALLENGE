@@ -97,34 +97,36 @@ def constroi_discriminador():
     return modelo
 
 def constroi_discriminador_2():
-    model = Sequential()
 	# normal
-    model.add(Conv2D(64, (3,3), padding='same', input_shape=(128,128,1)))
-    model.add(LeakyReLU(alpha=0.2))
-    model.add(Dropout(0.5))
+    input = layers.Input((128,128,1))
+    x = Conv2D(64, (3,3), padding='same', input_shape=(128,128,1))(input)
+    x = LeakyReLU(alpha=0.2)(x)
+    x = Dropout(0.5)(x)
 	# downsample
-    model.add(Conv2D(128, (3,3), strides=(2,2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
-    model.add(Dropout(0.5))
+    x = Conv2D(128, (3,3), strides=(2,2), padding='same')(x)
+    x = LeakyReLU(alpha=0.2)(x)
+    x = Dropout(0.5)(x)
 	# downsample
-    model.add(Conv2D(128, (3,3), strides=(2,2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
+    x = Conv2D(128, (3,3), strides=(2,2), padding='same')(x)
+    x = LeakyReLU(alpha=0.2)(x)
     # downsample
-    model.add(Conv2D(128, (3,3), strides=(2,2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
-    model.add(Dropout(0.4))
+    x = Conv2D(128, (3,3), strides=(2,2), padding='same')(x)
+    x = LeakyReLU(alpha=0.2)(x)
+    x = Dropout(0.4)(x)
 	# downsample
-    model.add(Conv2D(256, (3,3), strides=(2,2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
+    x = Conv2D(256, (3,3), strides=(2,2), padding='same')(x)
+    x = LeakyReLU(alpha=0.2)(x)
 
-    model.add(Conv2D(128, (3,3), strides=(2,2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
-    model.add(Dropout(0.3))
+    x = Conv2D(128, (3,3), strides=(2,2), padding='same')(x)
+    x = LeakyReLU(alpha=0.2)(x)
+    x = Dropout(0.3)(x)
 	# classifier
-    model.add(Flatten())
-    model.add(Dropout(0.5))
-    model.add(Dense(1))
-    return model
+    x = Flatten()(x)
+    x = Dropout(0.5)(x)
+    output = Dense(1)(x)
+
+    modelo = keras.Model(input,output)
+    return modelo
 
 # Definição das funções de perda
 def loss_discriminador(real_output, fake_output):
