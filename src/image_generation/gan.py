@@ -72,25 +72,27 @@ def constroi_gerador():
 
 # Criando o discriminador
 def constroi_discriminador():
-    modelo = keras.Sequential()
-    modelo.add(layers.Conv2D(64, (3, 3), strides=(2, 2), padding='same', input_shape=(128, 128, 1)))
-    modelo.add(layers.LeakyReLU())
+    input = layers.Input((128,128,1))
+    x = layers.Conv2D(64, (3, 3), strides=(2, 2), padding='same')(input)
+    x = layers.LeakyReLU()(x)
     
-    modelo.add(layers.Conv2D(128, (3, 3), strides=(2, 2), padding='same'))
-    modelo.add(layers.LeakyReLU())
+    x = layers.Conv2D(128, (3, 3), strides=(2, 2), padding='same')(x)
+    x = layers.LeakyReLU()(x)
     
-    modelo.add(layers.Conv2D(128, (2, 2), strides=(2, 2), padding='same'))
-    modelo.add(layers.LeakyReLU())
+    x = layers.Conv2D(128, (2, 2), strides=(2, 2), padding='same')(x)
+    x = layers.LeakyReLU()(x)
     
-    modelo.add(layers.Conv2D(128, (3, 3), strides=(2, 2), padding='same'))
-    modelo.add(layers.LeakyReLU())
+    x = layers.Conv2D(128, (3, 3), strides=(2, 2), padding='same')(x)
+    x = layers.LeakyReLU()(x)
 
-    modelo.add(layers.Conv2D(128, (3, 3), strides=(2, 2), padding='same'))
-    modelo.add(layers.LeakyReLU())
+    x = layers.Conv2D(128, (3, 3), strides=(2, 2), padding='same')(x)
+    x = layers.LeakyReLU()(x)
     
-    modelo.add(layers.Flatten())
-    modelo.add(layers.Dropout(0.5))
-    modelo.add(layers.Dense(1))
+    x = layers.Flatten()(x)
+    x = layers.Dropout(0.5)(x)
+    output = layers.Dense(1)(x)
+
+    modelo = keras.Model(input,output)
     
     return modelo
 
