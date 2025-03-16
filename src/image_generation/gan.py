@@ -21,7 +21,7 @@ def normalize(image):
     return image
 
 # Carregando dataset
-dataset_path = "data/train"
+dataset_path = "data/train/"
 train_ds = keras.preprocessing.image_dataset_from_directory(
     dataset_path,
     label_mode=None,
@@ -35,39 +35,50 @@ train_ds = train_ds.map(lambda x: (normalize(x),))
 def plot_a_few_images(dataset):
     for batch in dataset:
         for image in batch:
-            plt.imshow(image[0, :, :, 0] * 127.5 + 127.5, cmap='gray')
-            plt.show()
+            plt.imshow(np.uint8(image[0, :, :, 0] * 127.5 + 127.5), cmap='gray')
+            plt.savefig('image.png')
+            break
+        break
         
 plot_a_few_images(train_ds)
 
 # Criando o gerador
 def constroi_gerador():
+
     input = layers.Input((100,))
     x = layers.Dense(4*4*256, use_bias=False)(input)
     x = layers.LeakyReLU()(x)
     x = layers.Reshape((4, 4, 256))(x)
 
-    x= layers.Conv2DTranspose(256, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
+    x= layers.Conv2DTranspose(256, (3, 3), strides=(2, 2), padding='same', use_bias=False)(x)
     x= layers.BatchNormalization()(x)
-    x= layers.LeakyReLU()(x)
+    x= layers.LeakyReLU(.2)(x)
     
 
-    x= layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
+    x= layers.Conv2DTranspose(128, (3, 3), strides=(2, 2), padding='same', use_bias=False)(x)
     x= layers.BatchNormalization()(x)
-    x= layers.LeakyReLU()(x)
+    x= layers.LeakyReLU(.2)(x)
     
-    x= layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
-    x= layers.LeakyReLU()(x)
+    x= layers.Conv2DTranspose(128, (3, 3), strides=(2, 2), padding='same', use_bias=False)(x)
+    x= layers.BatchNormalization()(x)
+    x= layers.LeakyReLU(.2)(x)
 
-    x= layers.Conv2DTranspose(128, (5, 5), strides=(2, 2), padding='same', use_bias=False)(x)
-    x= layers.LeakyReLU()(x)
+    x= layers.Conv2DTranspose(128, (3, 3), strides=(2, 2), padding='same', use_bias=False)(x)
+    x= layers.BatchNormalization()(x)
+    x= layers.LeakyReLU(.2)(x)
     
-    output = layers.Conv2DTranspose(1, (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh')(x)
+    x = layers.Conv2DTranspose(128, (3, 3), strides=(2, 2), padding='same')(x)
+    x= layers.BatchNormalization()(x)
+    x = layers.LeakyReLU(.2)(x)
+
+    x = Conv2D(1,3,1,'same', use_bias=False)(x)
+    output = layers.Activation('sigmoid')(x)
+
+
 
     model = keras.Model(input,output)
     
     return model
-
 
 
 # Criando o discriminador
