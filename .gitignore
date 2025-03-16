@@ -175,3 +175,4 @@ cython_debug/
 
 # Images
 **.png
+!**/loss.png
